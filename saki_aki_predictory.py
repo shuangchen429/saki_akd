@@ -67,7 +67,7 @@ if st.button("Predict"):
     predicted_proba = model.predict_proba(features)[0]
 
     # 提取预测的类别概率
-    probability = predicted_proba[predicted_class] * 100
+    probability = predicted_proba[1] * 100
 
     # 显示预测结果，使用 Matplotlib 渲染指定字体
     text = f"Based on feature values, predicted possibility of AKD is {probability:.2f}%"
