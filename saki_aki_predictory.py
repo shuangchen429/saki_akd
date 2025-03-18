@@ -5,28 +5,38 @@ import pandas as pd
 import shap
 import matplotlib.pyplot as plt
 
-# 加载保存的随机森林模型
-model = joblib.load('RF.pkl')
+# 加载逻辑回归模型
+model = joblib.load('saki_lr_model.pkl')
 
-# 特征范围定义（根据提供的特征范围和数据类型）
+# 定义特征参数（包含单位和范围）
 feature_ranges = {
-    "X_9": {"type": "categorical", "options": [0, 1]},
-    "X_39": {"type": "numerical", "min": 0.0, "max": 14417.0, "default": 5000.0},
-    "X_32": {"type": "numerical", "min": 2.0, "max": 6.6, "default": 4.0},
-    "X_34": {"type": "numerical", "min": 93.0, "max": 180.0, "default": 120.0},
-    "X_30": {"type": "numerical", "min": 1.0, "max": 480.0, "default": 240.0},
-    "X_28": {"type": "numerical", "min": 16.0, "max": 37.44, "default": 25.0},
-    "X_46": {"type": "numerical", "min": 0.0, "max": 77.0, "default": 40.0},
-    "X_31": {"type": "numerical", "min": 1.0, "max": 5.0, "default": 3.0},
-    "X_3": {"type": "numerical", "min": 0.0, "max": 170.0, "default": 85.0},
-    "X_36": {"type": "numerical", "min": 17.0, "max": 7768.0, "default": 2000.0},
-    "X_33": {"type": "numerical", "min": 10.0, "max": 45.6, "default": 30.0},
-    "X_44": {"type": "numerical", "min": 1.0, "max": 10.0, "default": 5.0},
-    "X_16": {"type": "categorical", "options": [0, 1]},
+    # 分类特征 (直接显示0/1)
+    'ACEI/ARB': {"type": "categorical", "options": [0, 1]},
+    'CRRT': {"type": "categorical", "options": [0, 1]},
+    'Cerebrovascular_disease': {"type": "categorical", "options": [0, 1]},
+    'Vasoactive_agent': {"type": "categorical", "options": [0, 1]},
+    
+    # 数值型特征
+    'APS III': {"type": "numerical", "min": 0, "max": 215, "default": 50, "unit": "points"},
+    'Age': {"type": "numerical", "min": 18, "max": 120, "default": 60, "unit": "years"},
+    'Baseexcess': {"type": "numerical", "min": -25, "max": 30, "default": 0, "unit": "mmol/L"},
+    'Bun': {"type": "numerical", "min": 1, "max": 100, "default": 20, "unit": "mg/dL"},
+    'Glucose': {"type": "numerical", "min": 1.5, "max": 50.0, "default": 5.5, "unit": "mmol/L"},
+    'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 5, "unit": "points"},
+    'Los_inf._AB': {"type": "numerical", "min": 0, "max": 30, "default": 7, "unit": "days"},
+    'OASIS': {"type": "numerical", "min": 0, "max": 299, "default": 150, "unit": "points"},
+    'Pco2': {"type": "numerical", "min": 10, "max": 150, "default": 40, "unit": "mmHg"},
+    'Po2': {"type": "numerical", "min": 20, "max": 700, "default": 100, "unit": "mmHg"},
+    'Resp_rate': {"type": "numerical", "min": 0, "max": 50, "default": 18, "unit": "breaths/min"},
+    'Scr_baseline': {"type": "numerical", "min": 0.3, "max": 10.0, "default": 1.0, "unit": "mg/dL"},
+    'Sodium': {"type": "numerical", "min": 120, "max": 160, "default": 140, "unit": "mmol/L"},
+    'Temperature': {"type": "numerical", "min": 32.0, "max": 42.0, "default": 36.6, "unit": "°C"},
+    'WBC': {"type": "numerical", "min": 0.0, "max": 50.0, "default": 8.0, "unit": "×10^9/L"},
+    'Weight': {"type": "numerical", "min": 30, "max": 200, "default": 70, "unit": "kg"}
 }
 
-# Streamlit 界面
-st.title("Prediction Model with SHAP Visualization")
+# 设置页面标题
+st.title("AKD Prediction Model with SHAP Visualization")
 
 # 动态生成输入项
 st.header("Enter the following feature values:")
@@ -46,6 +56,7 @@ for feature, properties in feature_ranges.items():
         )
     feature_values.append(value)
 
+
 # 转换为模型输入格式
 features = np.array([feature_values])
 
@@ -59,7 +70,7 @@ if st.button("Predict"):
     probability = predicted_proba[predicted_class] * 100
 
     # 显示预测结果，使用 Matplotlib 渲染指定字体
-    text = f"Based on feature values, predicted possibility of AKI is {probability:.2f}%"
+    text = f"Based on feature values, predicted possibility of AKD is {probability:.2f}%"
     fig, ax = plt.subplots(figsize=(8, 1))
     ax.text(
         0.5, 0.5, text,
@@ -72,8 +83,9 @@ if st.button("Predict"):
     plt.savefig("prediction_text.png", bbox_inches='tight', dpi=300)
     st.image("prediction_text.png")
 
+
     # 计算 SHAP 值
-    explainer = shap.TreeExplainer(model)
+    explainer = shap.LinearExplainer(model)
     shap_values = explainer.shap_values(pd.DataFrame([feature_values], columns=feature_ranges.keys()))
 
     # 生成 SHAP 力图
@@ -87,3 +99,4 @@ if st.button("Predict"):
     # 保存并显示 SHAP 图
     plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
     st.image("shap_force_plot.png")
+
