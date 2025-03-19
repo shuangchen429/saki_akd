@@ -84,9 +84,27 @@ if st.button("Predict"):
  # 计算 SHAP 值
 
 
-    explainer = shap.LinearExplainer(model)
-    shap_values = explainer.shap_values(pd.DataFrame([feature_values], columns=feature_ranges.keys()))
+# 假设 featurevalues 是一个包含特征值的字典，且 featureranges 是一个包含特征名称的字典
+feature_values_df = pd.DataFrame([feature_values], columns=featureranges.keys())
 
+# 创建一个默认的 masker
+masker = shap.maskers.Dense(feature_values_df.shape[1])
+
+# 使用 masker 创建 LinearExplainer
+explainer = shap.LinearExplainer(model, masker)
+
+# 计算 SHAP 值
+shap_values = explainer.shap_values(feature_values_df)
+
+# 生成第二类的 SHAP 力图
+class_index_for_second_class = 1  # 第二类的索引
+shap_fig_second_class = shap.force_plot(
+    explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
+    shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
+    feature_values_df,  # 特征值
+    matplotlib=True  # 使用 matplotlib 来生成图
+)
+    
 # 生成第二类的 SHAP 力图
     class_index_for_second_class = 1  # 第二类的索引
     shap_fig_second_class = shap.force_plot(
