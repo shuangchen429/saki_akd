@@ -60,11 +60,11 @@ features = np.array([feature_values])
 if st.button("Predict"):
     # 模型预测
     predicted_class = model.predict(features)[0]
-    predicted_proba = model.predict_proba(features)[0][1]
+    predicted_proba = model.predict_proba(features)[0]
 
 
     # 提取预测的类别概率
-    probability = predicted_proba[predicted_class] * 100
+    probability = predicted_proba[1] * 100
 
     # 显示预测结果，使用 Matplotlib 渲染指定字体
     text = f"Based on feature values, predicted possibility of AKD is {probability:.2f}%"
