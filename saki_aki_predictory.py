@@ -59,8 +59,8 @@ features = np.array([feature_values])
 
 if st.button("Predict"):
     # 模型预测
-    predicted_class = model.predict(features)[0]
-    predicted_proba = model.predict_proba(features)[0]
+    predicted_class = model.predict(features)[1]
+    predicted_proba = model.predict_proba(features)[1]
 
 
     # 提取预测的类别概率
