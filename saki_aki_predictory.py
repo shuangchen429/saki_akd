@@ -3,7 +3,6 @@ import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import shap
 
 # 加载逻辑回归模型
 model = joblib.load('logreg_model1.pkl')
@@ -63,6 +62,7 @@ if st.button("Predict"):
     predicted_class = model.predict(features)[0]
     predicted_proba = model.predict_proba(features)[0]
 
+
     # 提取预测的类别概率
     probability = predicted_proba[1] * 100
 
@@ -79,20 +79,3 @@ if st.button("Predict"):
     ax.axis('off')
     plt.savefig("prediction_text.png", bbox_inches='tight', dpi=300)
     st.image("prediction_text.png")
-
-    # 计算 SHAP 值
-    feature_values_df = pd.DataFrame([feature_values], columns=feature_ranges.keys())
-    explainer = shap.LinearExplainer(model, feature_values_df)
-    shap_values = explainer.shap_values(feature_values_df)
-
- # 生成 SHAP 力图
-    class_index = predicted_class  # 当前预测类别
-    shap_fig = shap.force_plot(
-        explainer.expected_value[class_index],
-        shap_values[:,:,class_index],
-        pd.DataFrame([feature_values], columns=feature_ranges.keys()),
-        matplotlib=True,
-    )
-    # 保存并显示 SHAP 图
-    plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
-    st.image("shap_force_plot.png")
