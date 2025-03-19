@@ -63,7 +63,6 @@ if st.button("Predict"):
     predicted_class = model.predict(features)[0]
     predicted_proba = model.predict_proba(features)[0]
 
-
     # 提取预测的类别概率
     probability = predicted_proba[1] * 100
 
@@ -81,39 +80,21 @@ if st.button("Predict"):
     plt.savefig("prediction_text.png", bbox_inches='tight', dpi=300)
     st.image("prediction_text.png")
 
- # 计算 SHAP 值
+    # 计算 SHAP 值
+    feature_values_df = pd.DataFrame([feature_values], columns=featureranges.keys())
+    masker = shap.maskers.Dense(feature_values_df.shape[1])
+    explainer = shap.LinearExplainer(model, masker)
+    shap_values = explainer.shap_values(feature_values_df)
 
-
-# 假设 featurevalues 是一个包含特征值的字典，且 featureranges 是一个包含特征名称的字典
-feature_values_df = pd.DataFrame([feature_values], columns=featureranges.keys())
-
-# 创建一个默认的 masker
-masker = shap.maskers.Dense(feature_values_df.shape[1])
-
-# 使用 masker 创建 LinearExplainer
-explainer = shap.LinearExplainer(model, masker)
-
-# 计算 SHAP 值
-shap_values = explainer.shap_values(feature_values_df)
-
-# 生成第二类的 SHAP 力图
-class_index_for_second_class = 1  # 第二类的索引
-shap_fig_second_class = shap.force_plot(
-    explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
-    shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
-    feature_values_df,  # 特征值
-    matplotlib=True  # 使用 matplotlib 来生成图
-)
-    
-# 生成第二类的 SHAP 力图
+    # 生成第二类的 SHAP 力图
     class_index_for_second_class = 1  # 第二类的索引
     shap_fig_second_class = shap.force_plot(
-    explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
-    shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
-    pd.DataFrame([feature_values], columns=feature_ranges.keys()),  # 特征值
-    matplotlib=True  # 使用 matplotlib 来生成图
-)
+        explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
+        shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
+        feature_values_df,  # 特征值
+        matplotlib=True  # 使用 matplotlib 来生成图
+    )
+
     # 保存并显示 SHAP 图
     plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
     st.image("shap_force_plot.png")
-
