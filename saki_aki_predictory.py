@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import shap
 
 # 加载逻辑回归模型
 model = joblib.load('logreg_model1.pkl')
