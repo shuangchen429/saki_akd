@@ -57,7 +57,6 @@ for feature, properties in feature_ranges.items():
 # 转换为模型输入格式
 features = np.array([feature_values])
 
-# 预测与 SHAP 可视化
 if st.button("Predict"):
     # 模型预测
     predicted_class = model.predict(features)[0]
