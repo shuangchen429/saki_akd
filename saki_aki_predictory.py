@@ -59,7 +59,7 @@ features = np.array([feature_values])
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 
- if st.button("Predict"):
+if st.button("Predict"):
     # 模型预测
     features_scaled = scaler.transform(features)  # 标准化处理
     predicted_class = model.predict(features_scaled)[0]
