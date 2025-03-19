@@ -82,8 +82,7 @@ if st.button("Predict"):
 
     # 计算 SHAP 值
     feature_values_df = pd.DataFrame([feature_values], columns=feature_ranges.keys())
-    masker = shap.maskers.Dense(feature_values_df.shape[1])
-    explainer = shap.LinearExplainer(model, masker)
+    explainer = shap.LinearExplainer(model, feature_values_df)
     shap_values = explainer.shap_values(feature_values_df)
 
     # 生成第二类的 SHAP 力图
