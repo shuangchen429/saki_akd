@@ -12,15 +12,12 @@ model = joblib.load('model.pkl')
 feature_ranges = {
     # 分类特征 (直接显示0/1)
     'ACEI/ARB': {"type": "categorical", "options": [0, 1]},
-    'CRRT': {"type": "categorical", "options": [0, 1]},
-    'Cerebrovascular_disease': {"type": "categorical", "options": [0, 1]},
-    'Vasoactive_agent': {"type": "categorical", "options": [0, 1]},
-    
-    # 数值型特征
     'APS III': {"type": "numerical", "min": 0, "max": 215, "default": 0, "unit": "points"},
     'Age': {"type": "numerical", "min": 18, "max": 120, "default": 50, "unit": "years"},
     'Baseexcess': {"type": "numerical", "min": -25, "max": 30, "default": 0, "unit": "mmol/L"},
     'Bun': {"type": "numerical", "min": 1, "max": 100, "default": 20, "unit": "mg/dL"},
+    'CRRT': {"type": "categorical", "options": [0, 1]},
+    'Cerebrovascular_disease': {"type": "categorical", "options": [0, 1]},
     'Glucose': {"type": "numerical", "min": 1.5, "max": 50.0, "default": 5.5, "unit": "mmol/L"},
     'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 0, "unit": "points"},
     'Los_inf._AB': {"type": "numerical", "min": 0, "max": 7, "default": 0, "unit": "days"},
@@ -31,6 +28,7 @@ feature_ranges = {
     'Scr_baseline': {"type": "numerical", "min": 0, "max": 5000, "default": 60, "unit": "mmol/L"},
     'Sodium': {"type": "numerical", "min": 110, "max": 170, "default": 140, "unit": "mmol/L"},
     'Temperature': {"type": "numerical", "min": 32.0, "max": 42.0, "default": 36.6, "unit": "°C"},
+    'Vasoactive_agent': {"type": "categorical", "options": [0, 1]},
     'WBC': {"type": "numerical", "min": 0.0, "max": 50.0, "default": 8.0, "unit": "×10^9/L"},
     'Weight': {"type": "numerical", "min": 30, "max": 200, "default": 60, "unit": "kg"}
 }
