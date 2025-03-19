@@ -81,7 +81,7 @@ if st.button("Predict"):
     st.image("prediction_text.png")
 
     # 计算 SHAP 值
-    feature_values_df = pd.DataFrame([feature_values], columns=featureranges.keys())
+    feature_values_df = pd.DataFrame([feature_values], columns=feature_ranges.keys())
     masker = shap.maskers.Dense(feature_values_df.shape[1])
     explainer = shap.LinearExplainer(model, masker)
     shap_values = explainer.shap_values(feature_values_df)
