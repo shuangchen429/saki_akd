@@ -85,15 +85,14 @@ if st.button("Predict"):
     explainer = shap.LinearExplainer(model, feature_values_df)
     shap_values = explainer.shap_values(feature_values_df)
 
-    # 生成第二类的 SHAP 力图
-    class_index_for_second_class = 1  # 第二类的索引
-    shap_fig_second_class = shap.force_plot(
-        explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
-        shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
-        feature_values_df,  # 特征值
-        matplotlib=True  # 使用 matplotlib 来生成图
+ # 生成 SHAP 力图
+    class_index = predicted_class  # 当前预测类别
+    shap_fig = shap.force_plot(
+        explainer.expected_value[class_index],
+        shap_values[:,:,class_index],
+        pd.DataFrame([feature_values], columns=feature_ranges.keys()),
+        matplotlib=True,
     )
-
     # 保存并显示 SHAP 图
     plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
     st.image("shap_force_plot.png")
