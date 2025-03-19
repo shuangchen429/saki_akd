@@ -79,3 +79,22 @@ if st.button("Predict"):
     ax.axis('off')
     plt.savefig("prediction_text.png", bbox_inches='tight', dpi=300)
     st.image("prediction_text.png")
+
+ # 计算 SHAP 值
+
+
+    explainer = shap.LinearExplainer(model)
+    shap_values = explainer.shap_values(pd.DataFrame([feature_values], columns=feature_ranges.keys()))
+
+# 生成第二类的 SHAP 力图
+    class_index_for_second_class = 1  # 第二类的索引
+    shap_fig_second_class = shap.force_plot(
+    explainer.expected_value[class_index_for_second_class],  # 第二类的预期输出值
+    shap_values[:, :, class_index_for_second_class],  # 第二类的 SHAP 值
+    pd.DataFrame([feature_values], columns=feature_ranges.keys()),  # 特征值
+    matplotlib=True  # 使用 matplotlib 来生成图
+)
+    # 保存并显示 SHAP 图
+    plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
+    st.image("shap_force_plot.png")
+
