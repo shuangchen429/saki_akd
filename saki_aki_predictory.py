@@ -58,8 +58,7 @@ for feature, properties in feature_ranges.items():
 features = np.array([feature_values])
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
-if st.button("Predict"):
-    # 模型预测
+
  if st.button("Predict"):
     # 模型预测
     features_scaled = scaler.transform(features)  # 标准化处理
