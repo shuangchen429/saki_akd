@@ -56,14 +56,15 @@ for feature, properties in feature_ranges.items():
 
 # 转换为模型输入格式
 features = np.array([feature_values])
-
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
 if st.button("Predict"):
     # 模型预测
  if st.button("Predict"):
     # 模型预测
     features_scaled = scaler.transform(features)  # 标准化处理
     predicted_class = model.predict(features_scaled)[0]
-    predicted_proba = model.predict_proba(features)[0]
+    predicted_proba = model.predict_proba(features_scaled)[0]
 
     # 提取预测的类别概率
     probability = predicted_proba[predicted_class] * 100
