@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 加载逻辑回归模型
-model = joblib.load('model1.pkl')
+model = joblib.load('model.pkl')
 scaler = joblib.load('saki_scaler.pkl')
 
 # 定义特征参数（包含单位和范围）
