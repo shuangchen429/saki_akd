@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 # 加载逻辑回归模型
 model = joblib.load('logreg_model1.pkl')
+scaler = joblib.load('saki_scaler.pkl')
 
 # 定义特征参数（包含单位和范围）
 feature_ranges = {
