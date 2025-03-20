@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 加载逻辑回归模型
-model = joblib.load('logreg_model1.pkl')
+model = joblib.load('model1.pkl')
 scaler = joblib.load('saki_scaler.pkl')
 
 # 定义特征参数（包含单位和范围）
@@ -34,7 +34,7 @@ feature_ranges = {
 }
 
 # 设置页面标题
-st.title("AKD Prediction Model with SHAP Visualization")
+st.title("AKD Prediction Model")
 
 # 动态生成输入项
 st.header("Enter the following feature values:")
@@ -56,8 +56,8 @@ for feature, properties in feature_ranges.items():
 
 
 # 转换为模型输入格式
-features = np.array([feature_values])
-
+features1 = np.array([feature_values])
+features= scaler.transform(features1)
 if st.button("Predict"):
     # 模型预测
     predicted_class = model.predict(features)[0]
