@@ -5,31 +5,28 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 加载逻辑回归模型
-model = joblib.load('model.pkl')
-scaler = joblib.load('saki_scaler.pkl')
+model = joblib.load('0511重置版saki_lr_model1.pkl')
+scaler = joblib.load('0511重置版saki_scaler.pkl')
 
 # 定义特征参数（包含单位和范围）
 feature_ranges = {
-    # 分类特征 (直接显示0/1)
+    # 分类特征 (直接显示0/1)'ACEI/ARB', 'APS III' ,'CRRT', 'Cerebrovascular Disease', 'LODS',
+                'Los_inf._AB', 'MBP', 'Mechanical Ventilation', 'Paraplegia', 'Resp Rate',
+                'Scr Baseline' ,'SpO2', 'Vasoactive Agent', 'Weight'
+    
     'ACEI/ARB': {"type": "categorical", "options": [0, 1]},
     'APS III': {"type": "numerical", "min": 0, "max": 215, "default": 0, "unit": "points"},
-    'Age': {"type": "numerical", "min": 18, "max": 120, "default": 50, "unit": "years"},
-    'Baseexcess': {"type": "numerical", "min": -25, "max": 30, "default": 0, "unit": "mmol/L"},
-    'Bun': {"type": "numerical", "min": 1, "max": 100, "default": 20, "unit": "mg/dL"},
     'CRRT': {"type": "categorical", "options": [0, 1]},
-    'Cerebrovascular_disease': {"type": "categorical", "options": [0, 1]},
-    'Glucose': {"type": "numerical", "min": 1.5, "max": 50.0, "default": 5.5, "unit": "mmol/L"},
+    'Cerebrovascular Disease': {"type": "categorical", "options": [0, 1]},
     'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 0, "unit": "points"},
-    'Los_inf._AB': {"type": "numerical", "min": 0, "max": 7, "default": 0, "unit": "days"},
-    'OASIS': {"type": "numerical", "min": 0, "max": 299, "default": 0, "unit": "points"},
-    'Pco2': {"type": "numerical", "min": 10, "max": 150, "default": 40, "unit": "mmHg"},
-    'Po2': {"type": "numerical", "min": 20, "max": 700, "default": 100, "unit": "mmHg"},
-    'Resp_rate': {"type": "numerical", "min": 0, "max": 50, "default": 18, "unit": "breaths/min"},
-    'Scr_baseline': {"type": "numerical", "min": 0, "max": 5000, "default": 60, "unit": "mmol/L"},
-    'Sodium': {"type": "numerical", "min": 110, "max": 170, "default": 140, "unit": "mmol/L"},
-    'Temperature': {"type": "numerical", "min": 32.0, "max": 42.0, "default": 36.6, "unit": "°C"},
-    'Vasoactive_agent': {"type": "categorical", "options": [0, 1]},
-    'WBC': {"type": "numerical", "min": 0.0, "max": 50.0, "default": 8.0, "unit": "×10^9/L"},
+    'Los_inf._AB': {"type": "numerical", "min": 0, "max": 7, "default": 0, "unit": "hours"},
+    'MBP': {"type": "numerical", "min": 0, "max": 200, "default": 60, "unit": "mmHg"},
+    'Mechanical Ventilation': {"type": "categorical", "options": [0, 1]},
+    'Paraplegia': {"type": "categorical", "options": [0, 1]},
+    'Resp Rate': {"type": "numerical", "min": 0, "max": 50, "default": 18, "unit": "breaths/min"},
+    'Scr Baseline': {"type": "numerical", "min": 0, "max": 5000, "default": 60, "unit": "mmol/L"},
+    'SpO2': {"type": "numerical", "min": 0, "max": 100, "default": 100, "unit": "%"},
+    'Vasoactive Agent': {"type": "categorical", "options": [0, 1]},
     'Weight': {"type": "numerical", "min": 30, "max": 200, "default": 60, "unit": "kg"}
 }
 
