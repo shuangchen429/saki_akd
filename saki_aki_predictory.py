@@ -19,19 +19,19 @@ except Exception as e:
 # 定义特征参数
 feature_ranges = {
     'ACEI/ARB': {"type": "categorical", "options": [0, 1]},
-    'APS III': {"type": "numerical", "min": 0, "max": 215, "default": , "unit": "points"},
+    'APS III': {"type": "numerical", "min": 0, "max": 215, "default":None , "unit": "points"},
     'CRRT': {"type": "categorical", "options": [0, 1]},
     'Cerebrovascular Disease': {"type": "categorical", "options": [0, 1]},
-    'LODS': {"type": "numerical", "min": 0, "max": 22, "default": , "unit": "points"},
-    'Los_inf._AB': {"type": "numerical", "min": 0,  "default": , "unit": "hours"},
-    'MBP': {"type": "numerical", "min": 0,  "default": , "unit": "mmHg"},
+    'LODS': {"type": "numerical", "min": 0, "max": 22, "default":None , "unit": "points"},
+    'Los_inf._AB': {"type": "numerical", "min": 0,  "default":None , "unit": "hours"},
+    'MBP': {"type": "numerical", "min": 0,  "default":None , "unit": "mmHg"},
     'Mechanical Ventilation': {"type": "categorical", "options": [0, 1]},
     'Paraplegia': {"type": "categorical", "options": [0, 1]},
-    'Resp Rate': {"type": "numerical", "min": 0, "default": , "unit": "breaths/min"},
-    'Scr Baseline': {"type": "numerical", "min": 0,  "default": , "unit": "mmol/L"},
-    'SpO2': {"type": "numerical", "min": 0, "max": 100, "default": , "unit": "%"},
+    'Resp Rate': {"type": "numerical", "min": 0, "default":None , "unit": "breaths/min"},
+    'Scr Baseline': {"type": "numerical", "min": 0,  "default":None , "unit": "mmol/L"},
+    'SpO2': {"type": "numerical", "min": 0, "max": 100, "default":None , "unit": "%"},
     'Vasoactive Agent': {"type": "categorical", "options": [0, 1]},
-    'Weight': {"type": "numerical", "min": 0,  "default": , "unit": "kg"}
+    'Weight': {"type": "numerical", "min": 0,  "default":None , "unit": "kg"}
 }
 
 # 页面布局
