@@ -20,7 +20,7 @@ with header_container:
         st.markdown("""
             <div style='border-left: 5px solid #1A5276; padding-left: 15px;'>
             <h4 style='color: #2E86C1;'>Clinical Decision Support System</h4>
-            <p style='font-size:16px;'>Department of Nephrology, Donghua Hospital</p>
+            <p style='font-size:16px;'>Emergency Department, Dongguan Tungwah Hospital</p>
             </div>
             """, unsafe_allow_html=True)
 
