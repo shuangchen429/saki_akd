@@ -13,7 +13,7 @@ header_container = st.container()
 with header_container:
     cols = st.columns([0.2, 0.8])
     with cols[0]:
-        logo = Image.open("images/医院logo.png")
+        logo = Image.open("东华医院图标.png")
         st.image(logo, use_column_width=True)
     with cols[1]:
         st.title("AKD Prediction Model")
