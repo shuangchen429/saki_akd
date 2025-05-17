@@ -178,4 +178,7 @@ with col2:
 
 # 可以添加页脚
 st.markdown("---")
+st.caption("Los_inf._AB: Time from infection discovery to antibiotic use.")
+st.caption("APS III: Acute Physiology Score III.")
+st.caption("LODS: Logistic Organ Dysfunction System score.")
 st.caption("Note: This prediction tool is for clinical reference only and should not replace clinical judgment.")
