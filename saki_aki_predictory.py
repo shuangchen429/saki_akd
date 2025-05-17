@@ -34,6 +34,13 @@ feature_ranges = {
     'Weight': {"type": "numerical", "min": 0, "max": 500, "default": 60, "unit": "kg"}
 }
 
+# 定义模型训练时的特征顺序
+feature_order = [
+    'ACEI/ARB', 'APS III', 'CRRT', 'Cerebrovascular Disease', 'LODS', 'Los_inf._AB',
+    'MBP', 'Mechanical Ventilation', 'Paraplegia', 'Resp Rate', 'Scr Baseline', 'SpO2',
+    'Vasoactive Agent', 'Weight'
+]
+
 # 页面布局
 st.title("AKD Prediction Model")
 st.markdown("""
@@ -99,8 +106,11 @@ with col2:
     
     if st.button("Predict AKD Risk", help="Click to calculate AKD risk probability"):
         try:
+            # 根据模型训练时的特征顺序重新排序输入特征
+            ordered_feature_values = [feature_values[feature_order.index(feature)] for feature in feature_order]
+            
             # 转换为模型输入格式
-            features = np.array([feature_values])
+            features = np.array([ordered_feature_values])
             scaled_features = scaler.transform(features)
             
             # 模型预测
