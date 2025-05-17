@@ -8,6 +8,25 @@ from PIL import Image
 # 设置页面配置
 st.set_page_config(page_title="AKD Prediction Model", layout="wide")
 
+# 标题栏容器
+header_container = st.container()
+with header_container:
+    cols = st.columns([0.2, 0.8])
+    with cols[0]:
+        logo = Image.open("images/医院logo.png")
+        st.image(logo, use_column_width=True)
+    with cols[1]:
+        st.title("AKD Prediction Model")
+        st.markdown("""
+            <div style='border-left: 5px solid #1A5276; padding-left: 15px;'>
+            <h4 style='color: #2E86C1;'>Clinical Decision Support System</h4>
+            <p style='font-size:16px;'>Department of Nephrology, Donghua Hospital</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+st.markdown("---")  # 添加分割线
+
+
 # 尝试加载模型
 try:
     model = joblib.load('0511重置版saki_lr_model1.pkl')
