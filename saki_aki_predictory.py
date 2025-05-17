@@ -63,9 +63,9 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.header("Patient Parameters")
-    feature_values = []
+    input_values = {}  # 使用字典临时存储特征值
     
-    # 分组显示参数，提高可读性
+    # 分组显示参数
     groups = {
         "Demographics": ['Weight', 'Scr Baseline'],
         "Clinical Conditions": ['Cerebrovascular Disease', 'Paraplegia'],
@@ -94,7 +94,10 @@ with col1:
                         format_func=lambda x: "Yes" if x == 1 else "No",
                         key=feature
                     )
-                feature_values.append(value)
+                input_values[feature] = value  # 按特征名存储到字典
+    
+    # 按feature_order顺序生成特征列表
+    feature_values = [input_values[feature] for feature in feature_order]
 
 with col2:
     st.header("Prediction Results")
