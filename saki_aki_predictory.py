@@ -128,33 +128,37 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
     
-    if st.button("Predict AKD Risk", help="Click to calculate AKD risk probability"):
-        try:
-            # 根据模型训练时的特征顺序重新排序输入特征
-            ordered_feature_values = [feature_values[feature_order.index(feature)] for feature in feature_order]
-            
-            # 转换为模型输入格式
-            features = np.array([ordered_feature_values])
-            scaled_features = scaler.transform(features)
-            
-            # 模型预测
-            predicted_proba = model.predict_proba(scaled_features)[0][1]
-            probability = predicted_proba * 100
+    # 修改后的预测按钮部分
+if st.button("Predict AKD Risk", help="Click to calculate AKD risk probability"):
+    try:
+        # ==================== 特征处理 ==================== 
+        # 确保按模型训练顺序获取特征值
+        ordered_feature_values = [input_values[feature] for feature in feature_order]
+        
+        # 转换为DataFrame并标准化
+        input_df = pd.DataFrame([ordered_feature_values], columns=feature_order)
+        scaled_features = scaler.transform(input_df)
 
-            # SHAP解释逻辑
+        # ==================== 模型预测 ==================== 
+        predicted_proba = model.predict_proba(scaled_features)[0][1]
+        probability = predicted_proba * 100
+
+        # ==================== 显示结果 ==================== 
+        st.subheader("Prediction Result")
+        st.markdown(f'<p class="big-font">AKD Risk Probability: <b>{probability:.2f}%</b></p>', 
+                   unsafe_allow_html=True)
+        st.progress(int(probability))
+
+        # ==================== SHAP分析 ==================== 
         st.subheader("Model Interpretation")
         
-        # 使用正确的解释器（假设是逻辑回归模型）
-        explainer = shap.LinearExplainer(model, scaler.transform(pd.DataFrame(columns=feature_order).fillna(0)))
+        # 初始化SHAP解释器
+        explainer = shap.LinearExplainer(model, scaler.transform(pd.DataFrame(columns=feature_order).fillna(0))
         
-        # 创建正确顺序的特征DataFrame
-        input_df = pd.DataFrame([feature_values], columns=feature_order)
+        # 计算SHAP值
+        shap_values = explainer.shap_values(scaled_features)
         
-        # 计算SHAP值（注意scaler转换）
-        scaled_input = scaler.transform(input_df)
-        shap_values = explainer.shap_values(scaled_input)
-        
-        # 生成SHAP可视化
+        # 生成可视化
         plt.figure(figsize=(12, 6))
         shap.force_plot(
             base_value=explainer.expected_value,
@@ -170,43 +174,10 @@ with col2:
             plt.savefig(tmpfile.name, bbox_inches='tight', dpi=150)
             plt.close()
             st.image(tmpfile.name, caption="SHAP Feature Impact Analysis")
-            
-            # 显示结果
-            st.subheader("Prediction Result")
-            st.markdown(f'<p class="big-font">AKD Risk Probability: <b>{probability:.2f}%</b></p>', 
-                       unsafe_allow_html=True)
-            
-            # 添加进度条可视化
-            st.progress(int(probability))
-            
-            # 添加解释性文本
-            if probability > 50:
-                st.warning("High risk of AKD - Consider close monitoring and intervention")
-            else:
-                st.success("Lower risk of AKD - Continue standard monitoring")
-            
-            # 添加风险等级分类
-            if probability >= 75:
-                risk_level = "Very High"
-                color = "red"
-            elif probability >= 50:
-                risk_level = "High"
-                color = "orange"
-            elif probability >= 25:
-                risk_level = "Moderate"
-                color = "yellow"
-            else:
-                risk_level = "Low"
-                color = "green"
-                
-            st.markdown(f'<p style="color:{color};">Risk Level: {risk_level}</p>', unsafe_allow_html=True)
-            
-            # 添加特征重要性解释（如果有）
-            # st.subheader("Key Contributing Factors")
-            # 这里可以添加特征重要性分析
-            
-        except Exception as e:
-            st.error(f"Prediction error: {str(e)}")
+
+    except Exception as e:
+        st.error(f"系统错误: {str(e)}")
+        st.stop()  # 严重错误时停止执行
 
 # 可以添加页脚
 st.markdown("---")
