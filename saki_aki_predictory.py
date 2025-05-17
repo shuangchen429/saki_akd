@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
+import shap
+import tempfile
 
 # 设置页面配置
 st.set_page_config(page_title="AKD Prediction Model", layout="wide")
@@ -138,6 +140,36 @@ with col2:
             # 模型预测
             predicted_proba = model.predict_proba(scaled_features)[0][1]
             probability = predicted_proba * 100
+
+            # SHAP解释逻辑
+        st.subheader("Model Interpretation")
+        
+        # 使用正确的解释器（假设是逻辑回归模型）
+        explainer = shap.LinearExplainer(model, scaler.transform(pd.DataFrame(columns=feature_order).fillna(0)))
+        
+        # 创建正确顺序的特征DataFrame
+        input_df = pd.DataFrame([feature_values], columns=feature_order)
+        
+        # 计算SHAP值（注意scaler转换）
+        scaled_input = scaler.transform(input_df)
+        shap_values = explainer.shap_values(scaled_input)
+        
+        # 生成SHAP可视化
+        plt.figure(figsize=(12, 6))
+        shap.force_plot(
+            base_value=explainer.expected_value,
+            shap_values=shap_values,
+            features=input_df,
+            feature_names=feature_order,
+            matplotlib=True,
+            show=False
+        )
+        
+        # 保存并显示图像
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmpfile:
+            plt.savefig(tmpfile.name, bbox_inches='tight', dpi=150)
+            plt.close()
+            st.image(tmpfile.name, caption="SHAP Feature Impact Analysis")
             
             # 显示结果
             st.subheader("Prediction Result")
