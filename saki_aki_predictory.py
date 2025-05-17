@@ -24,14 +24,14 @@ feature_ranges = {
     'Cerebrovascular Disease': {"type": "categorical", "options": [0, 1]},
     'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 0, "unit": "points"},
     'Los_inf._AB': {"type": "numerical", "min": 0, "max": 168, "default": 0, "unit": "hours"},
-    'MBP': {"type": "numerical", "min": 0, "max": 200, "default": 60, "unit": "mmHg"},
+    'MBP': {"type": "numerical", "min": 0, "max": 300, "default": 60, "unit": "mmHg"},
     'Mechanical Ventilation': {"type": "categorical", "options": [0, 1]},
     'Paraplegia': {"type": "categorical", "options": [0, 1]},
-    'Resp Rate': {"type": "numerical", "min": 0, "max": 60, "default": 20, "unit": "breaths/min"},
-    'Scr Baseline': {"type": "numerical", "min": 0, "max": 5000, "default": 60, "unit": "mmol/L"},
+    'Resp Rate': {"type": "numerical", "min": 0, "max": 80, "default": 20, "unit": "breaths/min"},
+    'Scr Baseline': {"type": "numerical", "min": 0, "max": 2000, "default": 60, "unit": "mmol/L"},
     'SpO2': {"type": "numerical", "min": 0, "max": 100, "default": 100, "unit": "%"},
     'Vasoactive Agent': {"type": "categorical", "options": [0, 1]},
-    'Weight': {"type": "numerical", "min": 30, "max": 200, "default": 60, "unit": "kg"}
+    'Weight': {"type": "numerical", "min": 0, "max": 500, "default": 60, "unit": "kg"}
 }
 
 # 页面布局
