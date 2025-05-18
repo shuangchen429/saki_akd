@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
-
 # 添加全局CSS样式
 st.markdown("""
 <style>
@@ -204,10 +203,9 @@ with header_container:
             <h4 style='color: #2E86C1;'>Clinical Decision Support System</h4>
             <p style='font-size:16px;'>Emergency Department, Dongguan Tungwah Hospital</p>
             </div>
-            """, unsafe_allow_html=True)
+            """, unsafe_allowhtml=True)
 
 st.markdown("---")  # 添加分割线
-
 
 # 尝试加载模型
 try:
@@ -257,7 +255,7 @@ st.markdown("""
         background-color: #f9f9f9;
     }
     </style>
-""", unsafe_allow_html=True)
+""", unsafe_allowhtml=True)
 
 # 创建两列布局
 col1, col2 = st.columns([1, 1])
@@ -306,7 +304,7 @@ with col2:
         <div class="prediction-box">
             <p>This section will display the AKD risk probability after you click the predict button.</p>
         </div>
-    """, unsafe_allow_html=True)
+    """, unsafe_allowhtml=True)
     
     if st.button("Predict AKD Risk", help="Click to calculate AKD risk probability"):
         try:
@@ -324,7 +322,7 @@ with col2:
             # 显示结果
             st.subheader("Prediction Result")
             st.markdown(f'<p class="big-font">AKD Risk Probability: <b>{probability:.2f}%</b></p>', 
-                       unsafe_allow_html=True)
+                       unsafe_allowhtml=True)
             
             # 添加进度条可视化
             st.progress(int(probability))
@@ -349,7 +347,7 @@ with col2:
                 risk_level = "Low"
                 color = "green"
                 
-            st.markdown(f'<p style="color:{color};">Risk Level: {risk_level}</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:{color};">Risk Level: {risk_level}</p>', unsafe_allowhtml=True)
             
             # 添加特征重要性解释（如果有）
             # st.subheader("Key Contributing Factors")
