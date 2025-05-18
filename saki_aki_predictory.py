@@ -5,6 +5,65 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
+# 在已有CSS基础上增加以下样式
+st.markdown("""
+<style>
+/* 新增样式 */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+/* 风险等级显示优化 */
+.risk-level {
+    font-size: 24px;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.low { background-color: #d4edda; color: #155724; }
+.moderate { background-color: #fff3cd; color: #856404; }
+.high { background-color: #ffeeba; color: #856404; }
+.very-high { background-color: #f8d7da; color: #721c24; }
+
+/* 卡片式布局 */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px 0;
+}
+
+/* 进度条增强 */
+.progress-bar {
+    background: #e9ecef;
+    border-radius: 25px;
+    height: 20px;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #1A5276 0%, #2E86C1 100%);
+    height: 100%;
+    border-radius: 25px;
+    transition: width 0.5s ease;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .columns {
+        flex-direction: column;
+    }
+    
+    .stNumberInput, .stSelectbox {
+        width: 100%;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 # 设置页面配置
 st.set_page_config(page_title="AKD Prediction Model", layout="wide")
 
