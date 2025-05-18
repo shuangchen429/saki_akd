@@ -5,6 +5,188 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
 
+
+# 添加全局CSS样式
+st.markdown("""
+<style>
+/* 全局样式 */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+/* 风险等级显示优化 */
+.risk-level {
+    font-size: 24px;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.risk-level.low {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.risk-level.moderate {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.risk-level.high {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.risk-level.very-high {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* 卡片式布局 */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* 输入区域样式 */
+.input-container {
+    margin-bottom: 20px;
+}
+
+/* 按钮样式 */
+.stButton>button {
+    background-color: #1A5276;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+/* 进度条样式 */
+.stProgress > div > div > div > div {
+    background-color: #2E86C1;
+}
+
+/* 图表样式 */
+.plot-container {
+    height: 300px;
+    margin: 20px 0;
+}
+
+/* 表格样式 */
+.stDataFrame {
+    margin-top: 20px;
+}
+
+/* 侧边栏样式 */
+.stSidebar {
+    background-color: #f0f2f6;
+    padding: 20px;
+}
+
+/* 标题样式 */
+h1, h2, h3 {
+    color: #1A5276;
+}
+
+/* 说明文本样式 */
+.stMarkdown {
+    color: #2E86C1;
+}
+
+/* 错误信息样式 */
+.stError {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* 成功信息样式 */
+.stSuccess {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* 警告信息样式 */
+.stWarning {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* 滑块样式 */
+.stSlider > div > div > div > div {
+    background-color: #2E86C1;
+}
+
+/* 下拉菜单样式 */
+.stSelectbox > div > div > div {
+    background-color: white;
+    color: #1A5276;
+}
+
+/* 日期选择器样式 */
+.stDateInput > div > div > div {
+    background-color: white;
+    color: #1A5276;
+}
+
+/* 代码块样式 */
+.stCode {
+    background-color: #f0f2f6;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* 链接样式 */
+a {
+    color: #1A5276;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2E86C1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1A5276;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .card {
+        padding: 15px;
+    }
+    
+    .risk-level {
+        font-size: 20px;
+    }
+}
+</style>
+""", unsafe_allowhtml=True)
+
 # 设置页面配置
 st.set_page_config(page_title="AKD Prediction Model", layout="wide")
 
