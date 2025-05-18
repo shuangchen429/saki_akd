@@ -1,206 +1,184 @@
 import streamlit as st
 import joblib
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image
-import shap
 
-# --------------------------
-# 配置与初始化
-# --------------------------
-st.set_page_config(
-    page_title="AKD Prediction Model",
-    layout="wide",
-    page_icon="🏥"
-)
+# 设置页面配置
+st.set_page_config(page_title="AKD Prediction Model", layout="wide")
 
-# --------------------------
-# 自定义样式
-# --------------------------
+# 标题栏容器
+header_container = st.container()
+with header_container:
+    cols = st.columns([0.2, 0.8])
+    with cols[0]:
+        logo = Image.open("东华医院图标.png")
+        st.image(logo, use_column_width=True)
+    with cols[1]:
+        st.title("AKD Prediction Model")
+        st.markdown("""
+            <div style='border-left: 5px solid #1A5276; padding-left: 15px;'>
+            <h4 style='color: #2E86C1;'>Clinical Decision Support System</h4>
+            <p style='font-size:16px;'>Emergency Department, Dongguan Tungwah Hospital</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+st.markdown("---")  # 添加分割线
+
+
+# 尝试加载模型
+try:
+    model = joblib.load('0511重置版saki_lr_model1.pkl')
+    scaler = joblib.load('0511重置版saki_scaler.pkl')
+except Exception as e:
+    st.error(f"Error loading model: {str(e)}")
+    st.stop()
+
+# 定义特征参数
+feature_ranges = {
+    'ACEI/ARB': {"type": "categorical", "options": [0, 1]},
+    'APS III': {"type": "numerical", "min": 0, "max": 215, "default": 0, "unit": "points"},
+    'CRRT': {"type": "categorical", "options": [0, 1]},
+    'Cerebrovascular Disease': {"type": "categorical", "options": [0, 1]},
+    'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 0, "unit": "points"},
+    'Los_inf._AB': {"type": "numerical", "min": 0, "max": 168, "default": 0, "unit": "hours"},
+    'MBP': {"type": "numerical", "min": 0, "max": 300, "default": 75, "unit": "mmHg"},
+    'Mechanical Ventilation': {"type": "categorical", "options": [0, 1]},
+    'Paraplegia': {"type": "categorical", "options": [0, 1]},
+    'Resp Rate': {"type": "numerical", "min": 0, "max": 80, "default": 20, "unit": "breaths/min"},
+    'Scr Baseline': {"type": "numerical", "min": 0, "max": 2000, "default": 60, "unit": "mmol/L"},
+    'SpO2': {"type": "numerical", "min": 0, "max": 100, "default": 100, "unit": "%"},
+    'Vasoactive Agent': {"type": "categorical", "options": [0, 1]},
+    'Weight': {"type": "numerical", "min": 0, "max": 500, "default": 60, "unit": "kg"}
+}
+
+# 定义模型训练时的特征顺序
+feature_order = [
+    'ACEI/ARB', 'APS III', 'CRRT', 'Cerebrovascular Disease', 'LODS', 'Los_inf._AB',
+    'MBP', 'Mechanical Ventilation', 'Paraplegia', 'Resp Rate', 'Scr Baseline', 'SpO2',
+    'Vasoactive Agent', 'Weight'
+]
+
+# 页面布局
+st.title("AKD Prediction Model")
 st.markdown("""
     <style>
-    .risk-high { background-color: #ffcccc !important; border-left: 5px solid #ff0000; }
-    .risk-medium { background-color: #fff3cd !important; border-left: 5px solid #ffc107; }
-    .risk-low { background-color: #d4edda !important; border-left: 5px solid #28a745; }
-    .parameter-group { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-    .feature-importance { font-size: 0.9em; color: #6c757d; }
+    .big-font {
+        font-size:18px !important;
+    }
+    .prediction-box {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin-top: 20px;
+        background-color: #f9f9f9;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --------------------------
-# 模型与数据加载
-# --------------------------
-@st.cache_resource
-def load_assets():
-    """加载模型和scaler"""
-    try:
-        model = joblib.load('0511重置版saki_lr_model1.pkl')
-        scaler = joblib.load('0511重置版saki_scaler.pkl')
-        explainer = shap.TreeExplainer(model) if hasattr(model, 'tree_') else shap.LinearExplainer(model, scaler.transform(feature_samples))
-        return model, scaler, explainer
-    except Exception as e:
-        st.error(f"资源加载失败: {str(e)}")
-        st.stop()
+# 创建两列布局
+col1, col2 = st.columns([1, 1])
 
-model, scaler, explainer = load_assets()
-
-# --------------------------
-# 特征配置
-# --------------------------
-FEATURE_CONFIG = {
-    'ACEI/ARB': {
-        "type": "binary",
-        "label": "ACEI/ARB使用",
-        "options": {0: "否", 1: "是"},
-        "help": "患者是否正在使用ACEI/ARB类药物"
-    },
-    'APS III': {
-        "type": "numeric",
-        "label": "APS III评分",
-        "min": 0,
-        "max": 215,
-        "default": 40,
-        "unit": "分",
-        "clinical_range": (20, 50)
-    },
-    # 其他特征配置...
-}
-
-FEATURE_ORDER = ['ACEI/ARB', 'APS III', ..., 'Weight']
-
-# --------------------------
-# 组件生成函数
-# --------------------------
-def create_input_widget(feature):
-    """根据特征配置生成输入组件"""
-    config = FEATURE_CONFIG[feature]
+with col1:
+    st.header("Patient Parameters")
+    input_values = {}  # 使用字典临时存储特征值
     
-    with st.container():
-        if config["type"] == "binary":
-            return st.radio(
-                label=config["label"],
-                options=list(config["options"].keys()),
-                format_func=lambda x: config["options"][x],
-                help=config.get("help", "")
-            )
-        elif config["type"] == "numeric":
-            value = st.number_input(
-                label=f"{config['label']} ({config['unit']})",
-                min_value=config["min"],
-                max_value=config["max"],
-                value=config["default"],
-                step=1.0,
-                help=get_clinical_guidance(config)
-            )
-            validate_input(value, config)
-            return value
+    # 分组显示参数
+    groups = {
+        "Demographics": ['Weight', 'Scr Baseline'],
+        "Clinical Conditions": ['Cerebrovascular Disease', 'Paraplegia'],
+        "Vitals & Measurements": ['MBP', 'Resp Rate', 'SpO2', 'Los_inf._AB'],
+        "Treatment & Support": ['ACEI/ARB', 'CRRT', 'Mechanical Ventilation', 'Vasoactive Agent'],
+        "Scoring Systems": ['APS III', 'LODS']
+    }
+    
+    for group_name, features in groups.items():
+        with st.expander(group_name):
+            for feature in features:
+                properties = feature_ranges[feature]
+                if properties["type"] == "numerical":
+                    value = st.number_input(
+                        label=f"{feature} ({properties['unit']})",
+                        min_value=float(properties["min"]),
+                        max_value=float(properties["max"]),
+                        value=float(properties["default"]),
+                        key=feature,
+                        help=f"Range: {properties['min']}-{properties['max']} {properties['unit']}"
+                    )
+                elif properties["type"] == "categorical":
+                    value = st.selectbox(
+                        label=feature,
+                        options=properties["options"],
+                        format_func=lambda x: "Yes" if x == 1 else "No",
+                        key=feature
+                    )
+                input_values[feature] = value  # 按特征名存储到字典
+    
+    # 按feature_order顺序生成特征列表
+    feature_values = [input_values[feature] for feature in feature_order]
 
-def get_clinical_guidance(config):
-    """生成临床参考范围提示"""
-    if "clinical_range" in config:
-        return f"临床参考范围: {config['clinical_range'][0]}-{config['clinical_range'][1]} {config['unit']}"
-    return ""
-
-def validate_input(value, config):
-    """输入值验证"""
-    if "clinical_range" in config:
-        if not (config["clinical_range"][0] <= value <= config["clinical_range"][1]):
-            st.warning(f"⚠️ 异常值: 临床常见范围为{config['clinical_range'][0]}-{config['clinical_range'][1]}")
-
-# --------------------------
-# 可解释性分析
-# --------------------------
-def explain_prediction(features):
-    """生成SHAP解释"""
-    shap_values = explainer.shap_values(features)
+with col2:
+    st.header("Prediction Results")
+    st.markdown("""
+        <div class="prediction-box">
+            <p>This section will display the AKD risk probability after you click the predict button.</p>
+        </div>
+    """, unsafe_allow_html=True)
     
-    fig, ax = plt.subplots()
-    shap.summary_plot(shap_values, features, feature_names=FEATURE_ORDER, show=False)
-    plt.tight_layout()
-    return fig
-
-# --------------------------
-# 主界面
-# --------------------------
-def main():
-    # 页眉
-    with st.container():
-        cols = st.columns([0.15, 0.85])
-        with cols[0]:
-            st.image(Image.open("东华医院图标.png"), width=120)
-        with cols[1]:
-            st.title("急性肾脏病（AKD）预测模型")
-            st.markdown("**东莞东华医院急诊科临床决策支持系统**")
-    
-    st.markdown("---")
-    
-    # 主内容区
-    col1, col2 = st.columns([1, 1], gap="large")
-    
-    with col1:
-        st.header("患者参数")
-        inputs = {}
-        
-        # 分组输入
-        with st.expander("基本信息", expanded=True):
-            inputs['Weight'] = create_input_widget('Weight')
-            inputs['Age'] = create_input_widget('Age')
-        
-        with st.expander("生命体征"):
-            inputs['MBP'] = create_input_widget('MBP')
-            inputs['Resp Rate'] = create_input_widget('Resp Rate')
-        
-        # 其他分组...
-    
-    with col2:
-        st.header("风险评估")
-        
-        if st.button("开始预测", type="primary"):
-            try:
-                # 特征处理
-                features = np.array([inputs[feat] for feat in FEATURE_ORDER]).reshape(1, -1)
-                scaled_features = scaler.transform(features)
-                
-                # 预测
-                proba = model.predict_proba(scaled_features)[0][1]
-                risk_class = "high" if proba >= 0.5 else "low"
-                
-                # 结果展示
-                with st.container():
-                    st.markdown(f"""
-                        <div class='risk-{risk_class}' style='padding: 20px; border-radius: 8px;'>
-                            <h3>预测结果</h3>
-                            <p style='font-size: 2em; margin: 0.5em 0;'>{proba*100:.1f}%</p>
-                            <p>AKD发生风险：<strong>{'高危' if risk_class == 'high' else '低危'}</strong></p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # 可解释性分析
-                    st.subheader("风险因素分析")
-                    fig = explain_prediction(scaled_features)
-                    st.pyplot(fig)
-                    
-                    # 临床建议
-                    st.subheader("临床建议")
-                    if risk_class == "high":
-                        st.markdown("""
-                            - 立即进行肾功能评估
-                            - 考虑启动肾脏保护措施
-                            - 每小时监测尿量
-                            - 复查血肌酐和电解质
-                        """)
-                    else:
-                        st.markdown("""
-                            - 维持当前治疗方案
-                            - 每4小时监测生命体征
-                            - 关注液体平衡
-                        """)
+    if st.button("Predict AKD Risk", help="Click to calculate AKD risk probability"):
+        try:
+            # 根据模型训练时的特征顺序重新排序输入特征
+            ordered_feature_values = [feature_values[feature_order.index(feature)] for feature in feature_order]
             
-            except Exception as e:
-                st.error(f"预测失败: {str(e)}")
+            # 转换为模型输入格式
+            features = np.array([ordered_feature_values])
+            scaled_features = scaler.transform(features)
+            
+            # 模型预测
+            predicted_proba = model.predict_proba(scaled_features)[0][1]
+            probability = predicted_proba * 100
+            
+            # 显示结果
+            st.subheader("Prediction Result")
+            st.markdown(f'<p class="big-font">AKD Risk Probability: <b>{probability:.2f}%</b></p>', 
+                       unsafe_allow_html=True)
+            
+            # 添加进度条可视化
+            st.progress(int(probability))
+            
+            # 添加解释性文本
+            if probability > 50:
+                st.warning("High risk of AKD - Consider close monitoring and intervention")
+            else:
+                st.success("Lower risk of AKD - Continue standard monitoring")
+            
+            # 添加风险等级分类
+            if probability >= 75:
+                risk_level = "Very High"
+                color = "red"
+            elif probability >= 50:
+                risk_level = "High"
+                color = "orange"
+            elif probability >= 25:
+                risk_level = "Moderate"
+                color = "yellow"
+            else:
+                risk_level = "Low"
+                color = "green"
+                
+            st.markdown(f'<p style="color:{color};">Risk Level: {risk_level}</p>', unsafe_allow_html=True)
+            
+            # 添加特征重要性解释（如果有）
+            # st.subheader("Key Contributing Factors")
+            # 这里可以添加特征重要性分析
+            
+        except Exception as e:
+            st.error(f"Prediction error: {str(e)}")
 
-# --------------------------
-# 运行应用
-# --------------------------
-if __name__ == "__main__":
-    main()
+# 可以添加页脚
+st.markdown("---")
+st.caption("Los_inf._AB: Time from infection discovery to antibiotic use.")
+st.caption("APS III: Acute Physiology Score III.")
+st.caption("LODS: Logistic Organ Dysfunction System score.")
+st.caption("Note: This prediction tool is for clinical reference only and should not replace clinical judgment.")
