@@ -13,14 +13,15 @@ header_container = st.container()
 with header_container:
     cols = st.columns([0.2, 0.8])
     with cols[0]:
-        logo = Image.open("东华医院图标.png")
+        logo = Image.open("东华医院松山湖log.png")
         st.image(logo, use_column_width=True)
     with cols[1]:
         st.title("AKD Prediction Model")
         st.markdown("""
             <div style='border-left: 5px solid #1A5276; padding-left: 15px;'>
             <h4 style='color: #2E86C1;'>Clinical Decision Support System</h4>
-            <p style='font-size:16px;'>Emergency Department, Dongguan Tungwah Hospital</p>
+            <p style='font-size:16px;'>Dongguan Tungwah Hospital</p>
+            <p style='font-size:16px;'>Dongguan Songshan Lake Tungwah Hospital</p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -43,7 +44,7 @@ feature_ranges = {
     'Cerebrovascular Disease': {"type": "categorical", "options": [0, 1]},
     'LODS': {"type": "numerical", "min": 0, "max": 22, "default": 0, "unit": "points"},
     'Los_inf._AB': {"type": "numerical", "min": 0, "max": 168, "default": 0, "unit": "hours"},
-    'MBP': {"type": "numerical", "min": 0, "max": 300, "default": 60, "unit": "mmHg"},
+    'MBP': {"type": "numerical", "min": 0, "max": 300, "default": 75, "unit": "mmHg"},
     'Mechanical Ventilation': {"type": "categorical", "options": [0, 1]},
     'Paraplegia': {"type": "categorical", "options": [0, 1]},
     'Resp Rate': {"type": "numerical", "min": 0, "max": 80, "default": 20, "unit": "breaths/min"},
@@ -86,9 +87,8 @@ with col1:
     
     # 分组显示参数
     groups = {
-        "Demographics": ['Weight', 'Scr Baseline'],
+        "Vitals & Measurements": ['Weight', 'MBP', 'Resp Rate', 'SpO2', 'Los_inf._AB'，'Scr Baseline'],
         "Clinical Conditions": ['Cerebrovascular Disease', 'Paraplegia'],
-        "Vitals & Measurements": ['MBP', 'Resp Rate', 'SpO2', 'Los_inf._AB'],
         "Treatment & Support": ['ACEI/ARB', 'CRRT', 'Mechanical Ventilation', 'Vasoactive Agent'],
         "Scoring Systems": ['APS III', 'LODS']
     }
