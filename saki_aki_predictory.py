@@ -87,7 +87,7 @@ with col1:
     
     # 分组显示参数
     groups = {
-        "Vitals & Measurements": ['Weight', 'MBP', 'Resp Rate', 'SpO2', 'Los_inf._AB'，'Scr Baseline'],
+        "Vitals & Measurements": ['Weight', 'MBP', 'Resp Rate', 'SpO2', 'Los_inf._AB','Scr Baseline'],
         "Clinical Conditions": ['Cerebrovascular Disease', 'Paraplegia'],
         "Treatment & Support": ['ACEI/ARB', 'CRRT', 'Mechanical Ventilation', 'Vasoactive Agent'],
         "Scoring Systems": ['APS III', 'LODS']
